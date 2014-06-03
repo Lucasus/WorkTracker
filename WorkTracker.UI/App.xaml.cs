@@ -22,6 +22,9 @@ namespace WorkTracker.UI
 
             //create the notifyicon (it's a resource declared in NotifyIconResources.xaml
             notifyIcon = (TaskbarIcon)FindResource("NotifyIcon");
+
+            var workStateManager = new WorkStateManager();
+            notifyIcon.DataContext = new NotifyIconViewModel(new IconManager(workStateManager), workStateManager);
         }
 
         protected override void OnExit(ExitEventArgs e)

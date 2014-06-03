@@ -53,16 +53,13 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Page Include="MainWindow.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
+    <Compile Include="Domain\Icon.cs" />
+    <Compile Include="Domain\WorkStateManager.cs" />
+    <Compile Include="Domain\WorkState.cs" />
+    <Compile Include="Domain\IconManager.cs" />
+    <Compile Include="Utilities\DelegateCommand.cs" />
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="MainWindow.xaml.cs">
-      <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
     <Page Include="NotifyIconResources.xaml">
@@ -99,13 +96,17 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Red.ico" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\NotifyIcon\NotifyIcon.csproj">
       <Project>{3b66bbe9-aa5b-4e4a-a947-3e3d6c1577f6}</Project>
       <Name>NotifyIcon</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="circle-gray.ico" />
+    <Resource Include="circle-green.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="circle-yellow.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

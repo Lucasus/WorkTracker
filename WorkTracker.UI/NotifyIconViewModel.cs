@@ -1,86 +1,78 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Windows;
 using System.Windows.Input;
+using WorkTracker.UI.Utilities;
 
 namespace WorkTracker.UI
 {
-    /// <summary>
-    /// Provides bindable properties and commands for the NotifyIcon. In this sample, the
-    /// view model is assigned to the NotifyIcon in XAML. Alternatively, the startup routing
-    /// in App.xaml.cs could have created this view model, and assigned it to the NotifyIcon.
-    /// </summary>
-    public class NotifyIconViewModel
+
+    public class NotifyIconViewModel : INotifyPropertyChanged
     {
-        /// <summary>
-        /// Shows a window, if none is already open.
-        /// </summary>
-        public ICommand ShowWindowCommand
+        private IconManager iconManager;
+        private WorkStateManager workStateManager;
+
+        public NotifyIconViewModel(IconManager iconManager, WorkStateManager workStateManager)
+        {
+            this.iconManager = iconManager;
+            this.workStateManager = workStateManager;
+            iconManager.IconChanged += iconManager_IconChanged;
+        }
+
+        public ICommand SwitchWorkModeCommand
         {
             get
             {
                 return new DelegateCommand
                 {
-                    CanExecuteFunc = () => Application.Current.MainWindow == null,
                     CommandAction = () =>
                     {
-                        Application.Current.MainWindow = new MainWindow();
-                        Application.Current.MainWindow.Show();
+                        workStateManager.ChangeWorkState();
                     }
                 };
             }
         }
 
-        /// <summary>
-        /// Hides the main window. This command is only enabled if a window is open.
-        /// </summary>
-        public ICommand HideWindowCommand
+        public ICommand SwitchStoppedModeCommand
         {
             get
             {
                 return new DelegateCommand
                 {
-                    CommandAction = () => Application.Current.MainWindow.Close(),
-                    CanExecuteFunc = () => Application.Current.MainWindow != null
+                    CommandAction = () =>
+                    {
+                        workStateManager.ChangeStoppedState();
+                    }
                 };
             }
         }
-
-
-        /// <summary>
-        /// Shuts down the application.
-        /// </summary>
+     
         public ICommand ExitApplicationCommand
         {
             get
             {
-                return new DelegateCommand {CommandAction = () => Application.Current.Shutdown()};
+                return new DelegateCommand { CommandAction = () => Application.Current.Shutdown() };
             }
         }
-    }
 
-
-    /// <summary>
-    /// Simplistic delegate command for the demo.
-    /// </summary>
-    public class DelegateCommand : ICommand
-    {
-        public Action CommandAction { get; set; }
-        public Func<bool> CanExecuteFunc { get; set; }
-
-        public void Execute(object parameter)
+        public string IconPath
         {
-            CommandAction();
+            get
+            {
+                return iconManager.CurrentIcon.Path;
+            }
         }
 
-        public bool CanExecute(object parameter)
+        private void iconManager_IconChanged(object sender, EventArgs e)
         {
-            return CanExecuteFunc == null  || CanExecuteFunc();
+            OnPropertyChanged("IconPath");
         }
 
-        public event EventHandler CanExecuteChanged
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected virtual void OnPropertyChanged(string propertyName)
         {
-            add { CommandManager.RequerySuggested += value; }
-            remove { CommandManager.RequerySuggested -= value; }
+            PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }
