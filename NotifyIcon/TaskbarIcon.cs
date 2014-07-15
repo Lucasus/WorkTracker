@@ -409,7 +409,7 @@ namespace Hardcodet.Wpf.TaskbarNotification
                         LeftClickCommand.ExecuteIfEnabled(LeftClickCommandParameter, LeftClickCommandTarget ?? this);
                         ShowTrayPopup(cursorPosition);
                     };
-                    singleClickTimer.Change(WinApi.GetDoubleClickTime(), Timeout.Infinite);
+                    singleClickTimer.Change(WinApi.GetDoubleClickTime() / 4, Timeout.Infinite);
                     isLeftClickCommandInvoked = true;
                 }
                 else
@@ -431,7 +431,7 @@ namespace Hardcodet.Wpf.TaskbarNotification
                         LeftClickCommand.ExecuteIfEnabled(LeftClickCommandParameter, LeftClickCommandTarget ?? this);
                         ShowContextMenu(cursorPosition);
                     };
-                    singleClickTimer.Change(WinApi.GetDoubleClickTime(), Timeout.Infinite);
+                    singleClickTimer.Change(WinApi.GetDoubleClickTime() / 4, Timeout.Infinite);
                     isLeftClickCommandInvoked = true;
                 }
                 else
@@ -450,7 +450,7 @@ namespace Hardcodet.Wpf.TaskbarNotification
                     {
                         LeftClickCommand.ExecuteIfEnabled(LeftClickCommandParameter, LeftClickCommandTarget ?? this);
                     };
-                singleClickTimer.Change(WinApi.GetDoubleClickTime(), Timeout.Infinite);
+                singleClickTimer.Change(WinApi.GetDoubleClickTime() / 4, Timeout.Infinite);
             }
         }
 

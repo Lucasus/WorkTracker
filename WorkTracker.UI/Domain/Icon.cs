@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace WorkTracker.UI
+namespace WorkTracker.Domain
 {
     public class Icon
     {

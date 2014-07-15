@@ -53,10 +53,14 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Domain\StateLogger.cs" />
     <Compile Include="Domain\Icon.cs" />
+    <Compile Include="Domain\States\Break.cs" />
+    <Compile Include="Domain\States\State.cs" />
+    <Compile Include="Domain\States\Stopped.cs" />
+    <Compile Include="Domain\States\Work.cs" />
     <Compile Include="Domain\WorkStateManager.cs" />
-    <Compile Include="Domain\WorkState.cs" />
-    <Compile Include="Domain\IconManager.cs" />
+    <Compile Include="Infrastructure\ObservableViewModel.cs" />
     <Compile Include="Utilities\DelegateCommand.cs" />
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>

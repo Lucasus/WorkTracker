@@ -3,55 +3,45 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Timers;
 
-namespace WorkTracker.UI
+namespace WorkTracker.Domain
 {
     public class WorkStateManager
     {
-        public WorkState CurrentState { get; set; }
+        private StateLogger stateLogger;
+
+        public State CurrentState { get; set; }
 
         public event EventHandler StateChanged;
         public void OnStateChanged()
         {
-            StateChanged(this, EventArgs.Empty);
-        }
-
-        public WorkStateManager()
-        {
-            CurrentState = WorkState.Stopped;
-        }
-
-        public void ChangeWorkState()
-        {
-            switch (CurrentState)
+            if (StateChanged != null)
             {
-                case WorkState.Break:
-                    CurrentState = WorkState.Work;
-                    break;
-                case WorkState.Work:
-                    CurrentState = WorkState.Break;
-                    break;
-                case WorkState.Stopped:
-                    CurrentState = WorkState.Work;
-                    break;
+                StateChanged(this, EventArgs.Empty);
             }
-            OnStateChanged();
         }
 
-        public void ChangeStoppedState()
+        public WorkStateManager(StateLogger stateLogger)
         {
-            switch (CurrentState)
-            {
-                case WorkState.Break:
-                    CurrentState = WorkState.Stopped;
-                    break;
-                case WorkState.Work:
-                    CurrentState = WorkState.Stopped;
-                    break;
-                case WorkState.Stopped:
-                    CurrentState = WorkState.Work;
-                    break;
-            }
+            this.stateLogger = stateLogger;
+            changeState(new Stopped());
+        }
+
+        public void ChangeWorkOrBreakToOpposite()
+        {
+            changeState(CurrentState.GetOpposite());
+        }
+
+        public void ChangeStartOrStopToOpposite()
+        {
+            changeState(CurrentState.GetOppositeOrStopped());
+        }
+
+        private void changeState(State newState)
+        {
+            CurrentState = newState;
+            stateLogger.LogState(newState);
             OnStateChanged();
         }
     }

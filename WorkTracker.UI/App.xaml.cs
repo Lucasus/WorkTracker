@@ -6,6 +6,7 @@ using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
+using WorkTracker.Domain;
 
 namespace WorkTracker.UI
 {
@@ -23,8 +24,7 @@ namespace WorkTracker.UI
             //create the notifyicon (it's a resource declared in NotifyIconResources.xaml
             notifyIcon = (TaskbarIcon)FindResource("NotifyIcon");
 
-            var workStateManager = new WorkStateManager();
-            notifyIcon.DataContext = new NotifyIconViewModel(new IconManager(workStateManager), workStateManager);
+            notifyIcon.DataContext = new NotifyIconViewModel(new WorkStateManager(new StateLogger()));
         }
 
         protected override void OnExit(ExitEventArgs e)

@@ -2,21 +2,21 @@
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Input;
+using WorkTracker.Domain;
+using WorkTracker.UI.Infrastructure;
 using WorkTracker.UI.Utilities;
 
 namespace WorkTracker.UI
 {
 
-    public class NotifyIconViewModel : INotifyPropertyChanged
+    public class NotifyIconViewModel : ObservableViewModel
     {
-        private IconManager iconManager;
         private WorkStateManager workStateManager;
 
-        public NotifyIconViewModel(IconManager iconManager, WorkStateManager workStateManager)
+        public NotifyIconViewModel(WorkStateManager workStateManager)
         {
-            this.iconManager = iconManager;
             this.workStateManager = workStateManager;
-            iconManager.IconChanged += iconManager_IconChanged;
+            workStateManager.StateChanged += workStateManager_StateChanged;
         }
 
         public ICommand SwitchWorkModeCommand
@@ -27,13 +27,13 @@ namespace WorkTracker.UI
                 {
                     CommandAction = () =>
                     {
-                        workStateManager.ChangeWorkState();
+                        workStateManager.ChangeWorkOrBreakToOpposite();
                     }
                 };
             }
         }
 
-        public ICommand SwitchStoppedModeCommand
+        public ICommand StartOrStopCommand
         {
             get
             {
@@ -41,7 +41,7 @@ namespace WorkTracker.UI
                 {
                     CommandAction = () =>
                     {
-                        workStateManager.ChangeStoppedState();
+                        workStateManager.ChangeStartOrStopToOpposite();
                     }
                 };
             }
@@ -59,20 +59,22 @@ namespace WorkTracker.UI
         {
             get
             {
-                return iconManager.CurrentIcon.Path;
+                return workStateManager.CurrentState.Icon.Path;
             }
         }
 
-        private void iconManager_IconChanged(object sender, EventArgs e)
+        public string StartStopMenuHeader
         {
-            OnPropertyChanged("IconPath");
+            get
+            {
+                return workStateManager.CurrentState.ChangeStateText();
+            }
         }
 
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        protected virtual void OnPropertyChanged(string propertyName)
+        void workStateManager_StateChanged(object sender, EventArgs e)
         {
-            PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+            OnPropertyChanged("IconPath");
+            OnPropertyChanged("StartStopMenuHeader");
         }
     }
 }
