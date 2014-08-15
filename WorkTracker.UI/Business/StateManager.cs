@@ -16,12 +16,12 @@ namespace WorkTracker.Business
 
         public State CurrentState { get; set; }
 
-        public event EventHandler StateChanged;
-        public void OnStateChanged()
+        public event EventHandler<StateChange> StateChanged;
+        public void OnStateChanged(StateChange stateChange)
         {
             if (StateChanged != null)
             {
-                StateChanged(this, EventArgs.Empty);
+                StateChanged(this, stateChange);
             }
         }
 
@@ -29,13 +29,17 @@ namespace WorkTracker.Business
         {
             this.stateChangeRepository = stateChangeRepository;
             this.statsCalculator = statsCalculator;
-            changeState(new WorkState());
         }
 
         public void StopWork()
         {
             changeState(new StoppedState());
             statsCalculator.UpdateStatsFile();
+        }
+
+        public void StartWork()
+        {
+            changeState(new WorkState());
         }
 
         public void ChangeWorkOrBreakToOpposite()
@@ -53,8 +57,9 @@ namespace WorkTracker.Business
             if (CurrentState == null || newState.Name != CurrentState.Name)
             {
                 CurrentState = newState;
-                stateChangeRepository.Save(new StateChange { StateName = newState.Name, ChangeDate = DateTime.Now });
-                OnStateChanged();
+                var stateChange = new StateChange { StateName = newState.Name, ChangeDate = DateTime.Now };
+                stateChangeRepository.Save(stateChange);
+                OnStateChanged(stateChange);
             }
         }
     }

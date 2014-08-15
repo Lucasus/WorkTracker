@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.Windows;
 using System.Windows.Input;
 using WorkTracker.Business;
+using WorkTracker.Entities;
 using WorkTracker.Infrastructure;
 
 namespace WorkTracker.UI
@@ -10,14 +11,16 @@ namespace WorkTracker.UI
 
     public class NotifyIconViewModel : ObservableViewModel
     {
-        private StateManager workStateManager;
+        private StateManager stateManager;
         private StatsCalculator statsCalculator;
+        private StatsCache statsCache;
 
-        public NotifyIconViewModel(StateManager workStateManager, StatsCalculator statsCalculator)
+        public NotifyIconViewModel(StateManager stateManager, StatsCalculator statsCalculator, StatsCache statsCache)
         {
-            this.workStateManager = workStateManager;
+            this.stateManager = stateManager;
             this.statsCalculator = statsCalculator;
-            workStateManager.StateChanged += workStateManager_StateChanged;
+            this.statsCache = statsCache;
+            stateManager.StateChanged += stateManager_StateChanged;
         }
 
         public ICommand SwitchWorkModeCommand
@@ -28,7 +31,7 @@ namespace WorkTracker.UI
                 {
                     CommandAction = () =>
                     {
-                        workStateManager.ChangeWorkOrBreakToOpposite();
+                        stateManager.ChangeWorkOrBreakToOpposite();
                     }
                 };
             }
@@ -42,7 +45,7 @@ namespace WorkTracker.UI
                 {
                     CommandAction = () =>
                     {
-                        workStateManager.ChangeStartOrStopToOpposite();
+                        stateManager.ChangeStartOrStopToOpposite();
                     }
                 };
             }
@@ -61,8 +64,8 @@ namespace WorkTracker.UI
                 };
             }
         }
-     
-        public ICommand ExitApplicationCommand
+
+        public ICommand TrayToolTipOpen
         {
             get
             {
@@ -70,8 +73,22 @@ namespace WorkTracker.UI
                 {
                     CommandAction = () =>
                         {
-                            Application.Current.Shutdown();
+                            int i = 0;
                         }
+                };
+            }
+        }
+
+        public ICommand ExitApplicationCommand
+        {
+            get
+            {
+                return new DelegateCommand
+                {
+                    CommandAction = () =>
+                    {
+                        Application.Current.Shutdown();
+                    }
                 };
             }
         }
@@ -80,7 +97,32 @@ namespace WorkTracker.UI
         {
             get
             {
-                return workStateManager.CurrentState.Icon.Path;
+                return stateManager.CurrentState.Icon.Path;
+            }
+        }
+
+        public string BreakTimeText
+        {
+            get
+            {
+                return "Break: " + getShortTimeSpanString(statsCache.GetCurrentStats().BreakTime);
+            }
+        }
+
+        public string WorkTimeText
+        {
+            get
+            {
+                return "Work: " + getShortTimeSpanString(statsCache.GetCurrentStats().WorkTime);
+            }
+        }
+
+
+        public string TotalTimeText
+        {
+            get
+            {
+                return "Total: " + getShortTimeSpanString(statsCache.GetCurrentStats().TotalTime);
             }
         }
 
@@ -88,14 +130,27 @@ namespace WorkTracker.UI
         {
             get
             {
-                return workStateManager.CurrentState.ChangeStateText();
+                return stateManager.CurrentState.ChangeStateText();
             }
         }
 
-        void workStateManager_StateChanged(object sender, EventArgs e)
+        void stateManager_StateChanged(object sender, StateChange newState)
         {
             OnPropertyChanged("IconPath");
             OnPropertyChanged("StartStopMenuHeader");
+            StatsChanged();
+        }
+
+        public void StatsChanged()
+        {
+            OnPropertyChanged("TotalTimeText");
+            OnPropertyChanged("WorkTimeText");
+            OnPropertyChanged("BreakTimeText");
+        }
+
+        private string getShortTimeSpanString(TimeSpan timespan)
+        {
+            return new TimeSpan(timespan.Hours, timespan.Minutes, timespan.Seconds).ToString();
         }
     }
 }

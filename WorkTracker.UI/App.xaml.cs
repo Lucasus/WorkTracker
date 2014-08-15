@@ -6,6 +6,7 @@ using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
 using WorkTracker.Business;
 using WorkTracker.Repositories;
 
@@ -18,6 +19,7 @@ namespace WorkTracker.UI
     {
         private TaskbarIcon notifyIcon;
         private StateManager stateManager;
+        private NotifyIconViewModel viewModel;
 
         protected override void OnStartup(StartupEventArgs e)
         {
@@ -27,10 +29,18 @@ namespace WorkTracker.UI
             notifyIcon = (TaskbarIcon)FindResource("NotifyIcon");
 
             var config = new Config();
-            var changeStateRepository = new StateChangeRepository(config);
-            var statsCalculator = new StatsCalculator(new DailyStatsRepository(config), changeStateRepository);
-            stateManager = new StateManager(changeStateRepository, statsCalculator);
-            notifyIcon.DataContext = new NotifyIconViewModel(stateManager, statsCalculator);
+            var stateChangeRepository = new StateChangeRepository(config);
+            var statsCalculator = new StatsCalculator(new DailyStatsRepository(config), stateChangeRepository);
+            stateManager = new StateManager(stateChangeRepository, statsCalculator);
+            viewModel = new NotifyIconViewModel(stateManager, statsCalculator, new StatsCache(stateManager, statsCalculator, stateChangeRepository));
+            notifyIcon.DataContext = viewModel;
+            notifyIcon.TrayToolTipOpen +=notifyIcon_TrayToolTipOpen; 
+            stateManager.StartWork();
+        }
+
+        void notifyIcon_TrayToolTipOpen(object sender, RoutedEventArgs e)
+        {
+            viewModel.StatsChanged();
         }
 
         protected override void OnExit(ExitEventArgs e)

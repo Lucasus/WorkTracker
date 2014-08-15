@@ -21,7 +21,7 @@ namespace WorkTracker.Business
 
         public void UpdateStatsFile()
         {
-            var dailyStatsForToday = calculateStats(stateChangeRepository.GetForToday());
+            var dailyStatsForToday = CalculateDailyStats(stateChangeRepository.GetForToday());
             var allDailyStats = dailyStatsRepository.GetAll();
             if (allDailyStats.Count == 0 || allDailyStats.Last().StatsDate.Date != DateTime.Now.Date)
             {
@@ -35,7 +35,7 @@ namespace WorkTracker.Business
             
         }
 
-        private DailyStats calculateStats(IList<StateChange> stateChanges) 
+        public DailyStats CalculateDailyStats(IList<StateChange> stateChanges) 
         {
             TimeSpan workTime = new TimeSpan();
             TimeSpan breakTime = new TimeSpan();
