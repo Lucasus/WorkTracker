@@ -12,6 +12,7 @@ namespace WorkTracker.Business
     public class StateManager
     {        
         private StateChangeRepository stateChangeRepository;
+        private StatsCalculator statsCalculator;
 
         public State CurrentState { get; set; }
 
@@ -24,15 +25,17 @@ namespace WorkTracker.Business
             }
         }
 
-        public StateManager(StateChangeRepository stateChangeRepository)
+        public StateManager(StateChangeRepository stateChangeRepository, StatsCalculator statsCalculator)
         {
             this.stateChangeRepository = stateChangeRepository;
+            this.statsCalculator = statsCalculator;
             changeState(new WorkState());
         }
 
         public void StopWork()
         {
             changeState(new StoppedState());
+            statsCalculator.UpdateStatsFile();
         }
 
         public void ChangeWorkOrBreakToOpposite()

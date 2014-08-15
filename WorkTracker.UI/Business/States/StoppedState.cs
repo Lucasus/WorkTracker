@@ -22,7 +22,7 @@ namespace WorkTracker.Business
         {
             get
             {
-                return new Icon("/circle-gray.ico");
+                return new Icon("Resources/circle-gray.ico");
             }
         }
 

@@ -70,7 +70,6 @@ namespace WorkTracker.UI
                 {
                     CommandAction = () =>
                         {
-                            workStateManager.StopWork();
                             Application.Current.Shutdown();
                         }
                 };

@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 
 namespace WorkTracker.Business
 {
-    public class WorkState : State
+    public class BreakState : State
     {
         public override State GetOpposite()
         {
-            return new BreakState();
+            return new WorkState();
         }
 
         public override State GetOppositeOrStopped()
@@ -22,7 +22,7 @@ namespace WorkTracker.Business
         {
             get
             {
-                return new Icon("Resources/circle-green.ico");
+                return new Icon("Resources/circle-yellow.ico");
             }
         }
 
@@ -33,7 +33,7 @@ namespace WorkTracker.Business
 
         public override string Name
         {
-            get { return "Work"; }
+            get { return "Break"; }
         }
     }
 }

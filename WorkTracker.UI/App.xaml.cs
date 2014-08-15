@@ -17,6 +17,7 @@ namespace WorkTracker.UI
     public partial class App : Application
     {
         private TaskbarIcon notifyIcon;
+        private StateManager stateManager;
 
         protected override void OnStartup(StartupEventArgs e)
         {
@@ -27,11 +28,14 @@ namespace WorkTracker.UI
 
             var config = new Config();
             var changeStateRepository = new StateChangeRepository(config);
-            notifyIcon.DataContext = new NotifyIconViewModel(new StateManager(changeStateRepository), new StatsCalculator(new DailyStatsRepository(config), changeStateRepository));
+            var statsCalculator = new StatsCalculator(new DailyStatsRepository(config), changeStateRepository);
+            stateManager = new StateManager(changeStateRepository, statsCalculator);
+            notifyIcon.DataContext = new NotifyIconViewModel(stateManager, statsCalculator);
         }
 
         protected override void OnExit(ExitEventArgs e)
         {
+            stateManager.StopWork();
             notifyIcon.Dispose(); //the icon would clean up automatically, but this is cleaner
             base.OnExit(e);
         }
