@@ -5,6 +5,7 @@
 
     <ContextMenu x:Shared="false" x:Key="SysTrayMenu">
         <MenuItem Header="{Binding StartStopMenuHeader}" Command="{Binding StartOrStopCommand}" />
+        <MenuItem Header="Update stats" Command="{Binding UpdateStatsCommand}" />
         <MenuItem Header="Exit" Command="{Binding ExitApplicationCommand}" />
     </ContextMenu>
 

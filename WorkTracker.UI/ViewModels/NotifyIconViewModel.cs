@@ -2,20 +2,21 @@
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Input;
-using WorkTracker.Domain;
-using WorkTracker.UI.Infrastructure;
-using WorkTracker.UI.Utilities;
+using WorkTracker.Business;
+using WorkTracker.Infrastructure;
 
 namespace WorkTracker.UI
 {
 
     public class NotifyIconViewModel : ObservableViewModel
     {
-        private WorkStateManager workStateManager;
+        private StateManager workStateManager;
+        private StatsCalculator statsCalculator;
 
-        public NotifyIconViewModel(WorkStateManager workStateManager)
+        public NotifyIconViewModel(StateManager workStateManager, StatsCalculator statsCalculator)
         {
             this.workStateManager = workStateManager;
+            this.statsCalculator = statsCalculator;
             workStateManager.StateChanged += workStateManager_StateChanged;
         }
 
@@ -46,12 +47,33 @@ namespace WorkTracker.UI
                 };
             }
         }
+
+        public ICommand UpdateStatsCommand
+        {
+            get
+            {
+                return new DelegateCommand
+                {
+                    CommandAction = () =>
+                    {
+                        statsCalculator.UpdateStatsFile();
+                    }
+                };
+            }
+        }
      
         public ICommand ExitApplicationCommand
         {
             get
             {
-                return new DelegateCommand { CommandAction = () => Application.Current.Shutdown() };
+                return new DelegateCommand
+                {
+                    CommandAction = () =>
+                        {
+                            workStateManager.StopWork();
+                            Application.Current.Shutdown();
+                        }
+                };
             }
         }
 

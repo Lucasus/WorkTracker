@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 
-namespace WorkTracker.UI.Utilities
+namespace WorkTracker.Infrastructure
 {
     /// <summary>
     /// Simplistic delegate command for the demo.

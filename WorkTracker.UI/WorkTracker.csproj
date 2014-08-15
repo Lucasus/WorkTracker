@@ -7,8 +7,8 @@
     <ProjectGuid>{71B05390-E99F-47F1-AFE0-ED9D19883257}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>WorkTracker.UI</RootNamespace>
-    <AssemblyName>WorkTracker.UI</AssemblyName>
+    <RootNamespace>WorkTracker</RootNamespace>
+    <AssemblyName>WorkTracker</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -53,26 +53,32 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Domain\StateLogger.cs" />
-    <Compile Include="Domain\Icon.cs" />
-    <Compile Include="Domain\States\Break.cs" />
-    <Compile Include="Domain\States\State.cs" />
-    <Compile Include="Domain\States\Stopped.cs" />
-    <Compile Include="Domain\States\Work.cs" />
-    <Compile Include="Domain\WorkStateManager.cs" />
+    <Compile Include="Business\Config.cs" />
+    <Compile Include="Entities\StateChange.cs" />
+    <Compile Include="Infrastructure\FileExtensions.cs" />
+    <Compile Include="Repositories\DailyStatsRepository.cs" />
+    <Compile Include="Repositories\StateChangeRepository.cs" />
+    <Compile Include="Business\Icon.cs" />
+    <Compile Include="Business\States\BreakState.cs" />
+    <Compile Include="Business\States\State.cs" />
+    <Compile Include="Business\States\StoppedState.cs" />
+    <Compile Include="Business\States\WorkState.cs" />
+    <Compile Include="Entities\DailyStats.cs" />
+    <Compile Include="Business\StateManager.cs" />
     <Compile Include="Infrastructure\ObservableViewModel.cs" />
-    <Compile Include="Utilities\DelegateCommand.cs" />
+    <Compile Include="Business\StatsCalculator.cs" />
+    <Compile Include="Infrastructure\DelegateCommand.cs" />
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="NotifyIconResources.xaml">
+    <Page Include="UI\NotifyIconResources.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="NotifyIconViewModel.cs" />
+    <Compile Include="ViewModels\NotifyIconViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -106,12 +112,13 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="circle-gray.ico" />
-    <Resource Include="circle-green.ico" />
+    <Resource Include="Resources\circle-gray.ico" />
+    <Resource Include="Resources\circle-green.ico" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="circle-yellow.ico" />
+    <Resource Include="Resources\circle-yellow.ico" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

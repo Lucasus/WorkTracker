@@ -4,12 +4,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Timers;
+using WorkTracker.Entities;
+using WorkTracker.Repositories;
 
-namespace WorkTracker.Domain
+namespace WorkTracker.Business
 {
-    public class WorkStateManager
-    {
-        private StateLogger stateLogger;
+    public class StateManager
+    {        
+        private StateChangeRepository stateChangeRepository;
 
         public State CurrentState { get; set; }
 
@@ -22,10 +24,15 @@ namespace WorkTracker.Domain
             }
         }
 
-        public WorkStateManager(StateLogger stateLogger)
+        public StateManager(StateChangeRepository stateChangeRepository)
         {
-            this.stateLogger = stateLogger;
-            changeState(new Stopped());
+            this.stateChangeRepository = stateChangeRepository;
+            changeState(new WorkState());
+        }
+
+        public void StopWork()
+        {
+            changeState(new StoppedState());
         }
 
         public void ChangeWorkOrBreakToOpposite()
@@ -40,9 +47,12 @@ namespace WorkTracker.Domain
 
         private void changeState(State newState)
         {
-            CurrentState = newState;
-            stateLogger.LogState(newState);
-            OnStateChanged();
+            if (CurrentState == null || newState.Name != CurrentState.Name)
+            {
+                CurrentState = newState;
+                stateChangeRepository.Save(new StateChange { StateName = newState.Name, ChangeDate = DateTime.Now });
+                OnStateChanged();
+            }
         }
     }
 }
