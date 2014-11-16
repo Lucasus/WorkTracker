@@ -4,9 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace WorkTracker
+namespace WorkTracker.Business
 {
-    public class Class1
+    public enum StateNamesEnum
     {
+        Stopped,
+        Work,
+        Break
     }
 }

@@ -42,20 +42,23 @@
     <Compile Include="Business\Config.cs" />
     <Compile Include="Business\Icon.cs" />
     <Compile Include="Business\StateManager.cs" />
+    <Compile Include="Business\StateNamesEnum.cs" />
     <Compile Include="Business\States\BreakState.cs" />
     <Compile Include="Business\States\State.cs" />
     <Compile Include="Business\States\StoppedState.cs" />
     <Compile Include="Business\States\WorkState.cs" />
     <Compile Include="Business\StatsCache.cs" />
     <Compile Include="Business\StatsCalculator.cs" />
-    <Compile Include="Class1.cs" />
     <Compile Include="Entities\DailyStats.cs" />
     <Compile Include="Entities\StateChange.cs" />
-    <Compile Include="Infrastructure\FileExtensions.cs" />
-    <Compile Include="Infrastructure\ObservableViewModel.cs" />
+    <Compile Include="Infrastructure\FileDataProvider.cs" />
+    <Compile Include="Infrastructure\IDataProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Repositories\DailyStatsRepository.cs" />
+    <Compile Include="Repositories\Interfaces\IDailyStatsRepository.cs" />
+    <Compile Include="Repositories\Interfaces\IStateChangeRepository.cs" />
     <Compile Include="Repositories\StateChangeRepository.cs" />
+    <Compile Include="Business\StatsManager.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

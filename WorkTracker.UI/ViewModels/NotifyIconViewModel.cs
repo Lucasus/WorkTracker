@@ -12,13 +12,13 @@ namespace WorkTracker.UI
     public class NotifyIconViewModel : ObservableViewModel
     {
         private StateManager stateManager;
-        private StatsCalculator statsCalculator;
+        private StatsManager statsManager;
         private StatsCache statsCache;
 
-        public NotifyIconViewModel(StateManager stateManager, StatsCalculator statsCalculator, StatsCache statsCache)
+        public NotifyIconViewModel(StateManager stateManager, StatsManager statsManager, StatsCache statsCache)
         {
             this.stateManager = stateManager;
-            this.statsCalculator = statsCalculator;
+            this.statsManager = statsManager;
             this.statsCache = statsCache;
             stateManager.StateChanged += stateManager_StateChanged;
         }
@@ -59,7 +59,7 @@ namespace WorkTracker.UI
                 {
                     CommandAction = () =>
                     {
-                        statsCalculator.UpdateStatsFile();
+                        statsManager.UpdateStats();
                     }
                 };
             }

@@ -1,55 +1,59 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using WorkTracker.Business;
 using WorkTracker.Entities;
 using WorkTracker.Infrastructure;
 
 namespace WorkTracker.Repositories
 {
-    public class DailyStatsRepository
+    public class DailyStatsRepository : IDailyStatsRepository
     {
-        private Config config;
-        private string versionNumber = "V1.0";
+        private IStringDataProvider dataProvider;
+        private string versionNumber = "V1.1";
 
-        public DailyStatsRepository(Config config)
+        public DailyStatsRepository(IStringDataProvider dataProvider)
         {
-            this.config = config;
+            this.dataProvider = dataProvider;
         }
 
         public IList<DailyStats> GetAll()
         {
-            if (!File.Exists(config.StatsFilePath))
-            {
-                using (File.Create(config.StatsFilePath)) { }
-            }
-            return File.ReadAllLines(config.StatsFilePath).Select(x => fromRow(x)).ToList();
+            return dataProvider.GetAll().Select(x => fromRow(x)).ToList();
         }
 
         public void ReplaceWith(IList<DailyStats> allStats)
         {
-            File.WriteAllLines(config.StatsFilePath, allStats.Select(x => toRow(x)).ToArray());
+            dataProvider.OverrideWith(allStats.Select(x => toRow(x)).ToList());
         }
 
         private string toRow(DailyStats entity)
         {
-            return String.Join(",", versionNumber, entity.StatsDate.ToShortDateString(), entity.WorkTime, entity.BreakTime, entity.TotalTime);
+            return String.Join(",", versionNumber, entity.StatsDate.ToShortDateString(), entity.WorkStart, entity.WorkEnd, entity.WorkTime, entity.BreakTime, entity.TotalTime);
         }
 
         private DailyStats fromRow(string row)
         {
             var values = row.Split(',');
-            return new DailyStats()
+            if (values[0] == versionNumber)
             {
-                StatsDate = DateTime.Parse(values[1]),
-                WorkTime = TimeSpan.Parse(values[2]),
-                BreakTime = TimeSpan.Parse(values[3])
-            };
+                return new DailyStats()
+                {
+                    StatsDate = DateTime.Parse(values[1]),
+                    WorkStart = DateTime.Parse(values[2]),
+                    WorkEnd = DateTime.Parse(values[3]),
+                    WorkTime = TimeSpan.Parse(values[4]),
+                    BreakTime = TimeSpan.Parse(values[5])
+                };
+            }
+            else
+            {
+                return new DailyStats()
+                {
+                    StatsDate = DateTime.Parse(values[1]),
+                    WorkTime = TimeSpan.Parse(values[2]),
+                    BreakTime = TimeSpan.Parse(values[3])
+                };
+            }
         }
-
-
     }
 }

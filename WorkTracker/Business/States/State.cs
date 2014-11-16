@@ -11,7 +11,7 @@ namespace WorkTracker.Business
         public abstract State GetOpposite();
         public abstract State GetOppositeOrStopped();
         public abstract Icon Icon { get; }
-        public abstract string Name { get; }
+        public abstract StateNamesEnum Name { get; }
         public abstract string ChangeStateText();
     }
 }

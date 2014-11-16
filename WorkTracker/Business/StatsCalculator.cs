@@ -1,59 +1,73 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Collections.Generic;
 using WorkTracker.Entities;
-using WorkTracker.Repositories;
 
 namespace WorkTracker.Business
 {
     public class StatsCalculator
     {
-        private DailyStatsRepository dailyStatsRepository;
-        private StateChangeRepository stateChangeRepository;
-
-        public StatsCalculator(DailyStatsRepository dailyStatsRepository, StateChangeRepository stateChangeRepository) 
-        {
-            this.dailyStatsRepository = dailyStatsRepository;
-            this.stateChangeRepository = stateChangeRepository;
-        }
-
-        public void UpdateStatsFile()
-        {
-            var dailyStatsForToday = CalculateDailyStats(stateChangeRepository.GetForToday());
-            var allDailyStats = dailyStatsRepository.GetAll();
-            if (allDailyStats.Count == 0 || allDailyStats.Last().StatsDate.Date != DateTime.Now.Date)
-            {
-                allDailyStats.Add(dailyStatsForToday);
-            }
-            else
-            {
-                allDailyStats[allDailyStats.Count - 1] = dailyStatsForToday;
-            }
-            dailyStatsRepository.ReplaceWith(allDailyStats);
-            
-        }
-
-        public DailyStats CalculateDailyStats(IList<StateChange> stateChanges) 
+        public DailyStats GetSingleDayStats(IList<StateChange> singleDayStateChanges) 
         {
             TimeSpan workTime = new TimeSpan();
             TimeSpan breakTime = new TimeSpan();
-            for (int i = 1; i < stateChanges.Count; ++i)
+
+            DateTime? workStart = null;
+            DateTime? workEnd = null;
+
+            foreach (var stateChange in singleDayStateChanges)
             {
-                var previousState = stateChanges[i - 1];
-                var currentState = stateChanges[i];
-                if (previousState.StateName == "Work")
+                if (stateChange.StateName == StateNamesEnum.Stopped)
                 {
-                    workTime += currentState.ChangeDate - previousState.ChangeDate;
-                }
-                if (previousState.StateName == "Break")
-                {
-                    breakTime += currentState.ChangeDate - previousState.ChangeDate;
+                    var intervalStartDate = (stateChange.Previous == null || stateChange.Previous.ChangeDate.Date < stateChange.ChangeDate.Date
+                            ? stateChange.ChangeDate.Date
+                            : stateChange.Previous.ChangeDate);
+                    var interval = stateChange.ChangeDate - intervalStartDate;
+
+                    if (stateChange.Previous == null || stateChange.Previous.StateName == StateNamesEnum.Work)
+                    {
+                        workTime += interval;
+                        if (workStart == null)
+                        {
+                            workStart = intervalStartDate;
+                        }
+                        if (workEnd == null || workEnd < stateChange.ChangeDate)
+                        {
+                            workEnd = stateChange.ChangeDate;
+                        }
+                    }
+                    else if (stateChange.Previous.StateName == StateNamesEnum.Break)
+                    {
+                        breakTime += interval;
+                    }
                 }
             }
 
-            return new DailyStats() { BreakTime = breakTime, WorkTime = workTime, StatsDate = stateChanges[0].ChangeDate.Date };
+            if (singleDayStateChanges.Count > 0)
+            {
+                var lastStateChange = singleDayStateChanges.Last();
+                var intervalEndDate = lastStateChange.ChangeDate.Date.AddDays(1);
+                var interval = intervalEndDate - lastStateChange.ChangeDate;
+
+                if (lastStateChange.StateName == StateNamesEnum.Work)
+                {
+                    workTime += interval;
+                    workEnd = intervalEndDate.AddMinutes(-1); // we still want to have today date in stats
+                }
+                else if(lastStateChange.StateName == StateNamesEnum.Break)
+                {
+                    breakTime += interval;
+                }
+            }
+
+            return new DailyStats() 
+            { 
+                BreakTime = breakTime, 
+                WorkTime = workTime, 
+                StatsDate = singleDayStateChanges[0].ChangeDate.Date,
+                WorkStart = workStart ?? DateTime.MinValue,
+                WorkEnd = workEnd ?? DateTime.MinValue
+            };
         }
     }
 }

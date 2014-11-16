@@ -1,59 +1,72 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using WorkTracker.Business;
 using WorkTracker.Entities;
 using WorkTracker.Infrastructure;
 
 namespace WorkTracker.Repositories
 {
-    public class StateChangeRepository
+    public class StateChangeRepository : IStateChangeRepository
     {
-        private Config config;
+        private IStringDataProvider dataProvider;
         private string versionNumber = "V1.0";
-        private bool getForToday_isDirty = true;
-        private IList<StateChange> getForToday_cached;
 
-        public StateChangeRepository(Config config)
+        private bool getAll_isDirty = true;
+        private IList<StateChange> getAll_cached;
+
+        public StateChangeRepository(IStringDataProvider dataProvider)
         {
-            this.config = config;
+            this.dataProvider = dataProvider;
         }
 
-        public IList<StateChange> GetForToday()
+        public IList<StateChange> GetByDate(DateTime date)
         {
-            if (getForToday_isDirty)
+            return GetAll()
+                .Where(x => x.ChangeDate.Date == date.Date)
+                .ToList();
+        }
+
+        public IList<StateChange> GetAll()
+        {
+            if (getAll_isDirty)
             {
-                getForToday_isDirty = false;
-                getForToday_cached = File.ReadAllLines(config.ActivityLogsFilePath)
-                    .Select(x => fromRow(x))
-                    .Where(x => x.ChangeDate.Date == DateTime.Now.Date)
-                    .ToList();
+                getAll_isDirty = false;
+                getAll_cached = new List<StateChange>();
+                StateChange state = null;
+                foreach(var row in dataProvider.GetAll())
+                {
+                    state = fromRow(row, state);
+                    getAll_cached.Add(state);
+                }
             }
-            return getForToday_cached;
+            return getAll_cached;
+        }
+
+        public StateChange GetLast()
+        {
+            if (GetAll().Count == 0)
+            {
+                return null;
+            }
+            return GetAll().Last();
         }
 
         public void Save(StateChange stateChange)
         {
-            getForToday_isDirty = true;
-            toRow(stateChange).AppendToFile(config.ActivityLogsFilePath);
+            getAll_isDirty = true;
+            dataProvider.AddRecord(toStringRow(stateChange));
         }
 
-        private string toRow(StateChange stateChange)
+        private string toStringRow(StateChange stateChange)
         {
             return String.Join(",", versionNumber, stateChange.StateName, stateChange.ChangeDate);
         }
 
-        private StateChange fromRow(string row)
+        private StateChange fromRow(string row, StateChange previous)
         {
             var values = row.Split(',');
-            return new StateChange()
-            {
-                StateName = values[1],
-                ChangeDate = DateTime.Parse(values[2])
-            };
+            return new StateChange((StateNamesEnum)Enum.Parse(typeof(StateNamesEnum), values[1]), DateTime.Parse(values[2]), previous);
         }
 
     }

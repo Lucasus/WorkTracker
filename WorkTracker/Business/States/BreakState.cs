@@ -31,9 +31,9 @@ namespace WorkTracker.Business
             return "Stop";
         }
 
-        public override string Name
+        public override StateNamesEnum Name
         {
-            get { return "Break"; }
+            get { return StateNamesEnum.Break; }
         }
     }
 }

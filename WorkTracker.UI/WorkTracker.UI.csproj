@@ -65,6 +65,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Infrastructure\DelegateCommand.cs" />
+    <Compile Include="Infrastructure\ObservableViewModel.cs" />
     <Compile Include="ViewModels\NotifyIconViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>

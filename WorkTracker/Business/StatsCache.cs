@@ -11,11 +11,11 @@ namespace WorkTracker.Business
     public class StatsCache
     {
         private StateManager stateManager;
-        private IList<StateChange> stateChanges;
+        private IList<StateChange> todayStateChanges;
         private StatsCalculator statsCalculator;
-        private StateChangeRepository stateChangeRepository;
+        private IStateChangeRepository stateChangeRepository;
 
-        public StatsCache(StateManager stateManager, StatsCalculator statsCalculator, StateChangeRepository stateChangeRepository)
+        public StatsCache(StateManager stateManager, StatsCalculator statsCalculator, IStateChangeRepository stateChangeRepository)
         {
             this.stateManager = stateManager;
             this.statsCalculator = statsCalculator;
@@ -26,19 +26,25 @@ namespace WorkTracker.Business
         public DailyStats GetCurrentStats()
         {
             loadStateChanges();
-            return statsCalculator.CalculateDailyStats(stateChanges.Union(new[] { new StateChange() { ChangeDate = DateTime.Now, StateName = "Stopped" } }).ToList());
+            var lastStateChange = stateChangeRepository.GetLast();
+            var stateChangesForCalculation = todayStateChanges;
+            if (lastStateChange.StateName == StateNamesEnum.Work || lastStateChange.StateName == StateNamesEnum.Break)
+            {
+                stateChangesForCalculation = stateChangesForCalculation.Union(new[] { new StateChange(StateNamesEnum.Stopped, DateTime.Now, lastStateChange) }).ToList();
+            }
+            return statsCalculator.GetSingleDayStats(stateChangesForCalculation);
         }
 
         void stateManager_StateChanged(object sender, StateChange stateChange)
         {
-            stateChanges.Add(stateChange);
+            todayStateChanges.Add(stateChange);
         }
 
         private void loadStateChanges()
         {
-            if (stateChanges == null)
+            if (todayStateChanges == null)
             {
-                stateChanges = stateChangeRepository.GetForToday();
+                todayStateChanges = stateChangeRepository.GetByDate(DateTime.Now);
             }
         }
 

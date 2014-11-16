@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using WorkTracker.Business;
+using WorkTracker.Infrastructure;
 using WorkTracker.Repositories;
 
 namespace WorkTracker.UI
@@ -29,10 +30,11 @@ namespace WorkTracker.UI
             notifyIcon = (TaskbarIcon)FindResource("NotifyIcon");
 
             var config = new Config();
-            var stateChangeRepository = new StateChangeRepository(config);
-            var statsCalculator = new StatsCalculator(new DailyStatsRepository(config), stateChangeRepository);
-            stateManager = new StateManager(stateChangeRepository, statsCalculator);
-            viewModel = new NotifyIconViewModel(stateManager, statsCalculator, new StatsCache(stateManager, statsCalculator, stateChangeRepository));
+            var stateChangeRepository = new StateChangeRepository(new FileDataProvider(config.ActivityLogsFilePath));
+            var statsCalculator = new StatsCalculator();
+            var statsManager = new StatsManager(new DailyStatsRepository(new FileDataProvider(config.StatsFilePath)), stateChangeRepository, statsCalculator);
+            stateManager = new StateManager(stateChangeRepository, statsManager);
+            viewModel = new NotifyIconViewModel(stateManager, statsManager, new StatsCache(stateManager, statsCalculator, stateChangeRepository));
             notifyIcon.DataContext = viewModel;
             notifyIcon.TrayToolTipOpen +=notifyIcon_TrayToolTipOpen; 
             stateManager.StartWork();
