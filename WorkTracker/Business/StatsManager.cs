@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using WorkTracker.Entities;
 using WorkTracker.Repositories;
 
 namespace WorkTracker.Business
@@ -11,18 +12,18 @@ namespace WorkTracker.Business
     {
         private IDailyStatsRepository dailyStatsRepository;
         private IStateChangeRepository stateChangeRepository;
-        private StatsCalculator calculator;
+        private DailyStatsCalculator calculator;
 
-        public StatsManager(IDailyStatsRepository dailyStatsRepository, IStateChangeRepository stateChangeRepository, StatsCalculator calculator) 
+        public StatsManager(IDailyStatsRepository dailyStatsRepository, IStateChangeRepository stateChangeRepository, DailyStatsCalculator calculator) 
         {
             this.dailyStatsRepository = dailyStatsRepository;
             this.stateChangeRepository = stateChangeRepository;
             this.calculator = calculator;
         }
 
-        public void UpdateStats()
+        public IList<DailyStats> GetCurrentDailyStats(IList<StateChange> todayStateChanges)
         {
-            var dailyStatsForToday = calculator.GetSingleDayStats(stateChangeRepository.GetByDate(DateTime.Now));
+            var dailyStatsForToday = calculator.GetSingleDayStats(todayStateChanges);
             var allDailyStats = dailyStatsRepository.GetAll();
             if (allDailyStats.Count == 0 || allDailyStats.Last().StatsDate.Date != DateTime.Now.Date)
             {
@@ -32,7 +33,13 @@ namespace WorkTracker.Business
             {
                 allDailyStats[allDailyStats.Count - 1] = dailyStatsForToday;
             }
-            dailyStatsRepository.ReplaceWith(allDailyStats);
+            return allDailyStats;
+        }
+
+        public void UpdateStats()
+        {
+            var currentDailyStatsList = GetCurrentDailyStats(stateChangeRepository.GetByDate(DateTime.Now));
+            dailyStatsRepository.ReplaceWith(currentDailyStatsList);
         }
     }
 }

@@ -5,7 +5,7 @@ using WorkTracker.Entities;
 
 namespace WorkTracker.Business
 {
-    public class StatsCalculator
+    public class DailyStatsCalculator
     {
         public DailyStats GetSingleDayStats(IList<StateChange> singleDayStateChanges) 
         {
@@ -64,7 +64,7 @@ namespace WorkTracker.Business
             { 
                 BreakTime = breakTime, 
                 WorkTime = workTime, 
-                StatsDate = singleDayStateChanges[0].ChangeDate.Date,
+                StatsDate = (singleDayStateChanges.Count >0) ? singleDayStateChanges.First().ChangeDate.Date : DateTime.MinValue,
                 WorkStart = workStart ?? DateTime.MinValue,
                 WorkEnd = workEnd ?? DateTime.MinValue
             };

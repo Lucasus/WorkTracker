@@ -126,6 +126,15 @@ namespace WorkTracker.UI
             }
         }
 
+        public string OvertimeInfoText
+        {
+            get
+            {
+                var globalStats = statsCache.GetGlobalStats();
+                return "Difference: " + getShortTimeSpanString(globalStats.TimeDifference) + " " + (globalStats.TimeType == TimeDifferenceEnum.Overtime ? "overtime" : "undertime");
+            }
+        }
+
         public string StartStopMenuHeader
         {
             get
@@ -146,6 +155,7 @@ namespace WorkTracker.UI
             OnPropertyChanged("TotalTimeText");
             OnPropertyChanged("WorkTimeText");
             OnPropertyChanged("BreakTimeText");
+            OnPropertyChanged("OvertimeInfoText");
         }
 
         private string getShortTimeSpanString(TimeSpan timespan)

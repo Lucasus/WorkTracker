@@ -27,7 +27,7 @@ namespace WorkTracker.Tests
 
             stateChangeRepository.GetByDate(todayDate).Returns(stateChanges);
 
-            var stats = new StatsCalculator().GetSingleDayStats(stateChangeRepository.GetByDate(todayDate));
+            var stats = new DailyStatsCalculator().GetSingleDayStats(stateChangeRepository.GetByDate(todayDate));
 
             Assert.AreEqual(new TimeSpan(6, 30, 0), stats.WorkTime);
             Assert.AreEqual(new TimeSpan(1, 10, 0), stats.BreakTime);

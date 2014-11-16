@@ -40,6 +40,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Business\Config.cs" />
+    <Compile Include="Business\GlobalStatsCalculator.cs" />
     <Compile Include="Business\Icon.cs" />
     <Compile Include="Business\StateManager.cs" />
     <Compile Include="Business\StateNamesEnum.cs" />
@@ -48,8 +49,10 @@
     <Compile Include="Business\States\StoppedState.cs" />
     <Compile Include="Business\States\WorkState.cs" />
     <Compile Include="Business\StatsCache.cs" />
-    <Compile Include="Business\StatsCalculator.cs" />
+    <Compile Include="Business\DailyStatsCalculator.cs" />
+    <Compile Include="Business\TimeDifferenceEnum.cs" />
     <Compile Include="Entities\DailyStats.cs" />
+    <Compile Include="Entities\GlobalStats.cs" />
     <Compile Include="Entities\StateChange.cs" />
     <Compile Include="Infrastructure\FileDataProvider.cs" />
     <Compile Include="Infrastructure\IDataProvider.cs" />

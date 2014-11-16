@@ -28,14 +28,16 @@
                 BorderThickness="1"
                 CornerRadius="2"
                 Opacity="1"
-                Width="85"
-                Height="55">
+                Width="165"
+                Height="70">
                 <TextBlock>
                     <TextBlock Text="{Binding BreakTimeText}" HorizontalAlignment="Left" VerticalAlignment="Center" />
                     <LineBreak />
                     <TextBlock Text="{Binding WorkTimeText}" HorizontalAlignment="Left" VerticalAlignment="Center" />
                     <LineBreak />
                     <TextBlock Text="{Binding TotalTimeText}" HorizontalAlignment="Left" VerticalAlignment="Center" />                                           
+                    <LineBreak />
+                    <TextBlock Text="{Binding OvertimeInfoText}" HorizontalAlignment="Left" VerticalAlignment="Center" />                                           
                 </TextBlock>
             </Border>
         </tb:TaskbarIcon.TrayToolTip>

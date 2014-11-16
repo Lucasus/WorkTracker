@@ -31,10 +31,11 @@ namespace WorkTracker.UI
 
             var config = new Config();
             var stateChangeRepository = new StateChangeRepository(new FileDataProvider(config.ActivityLogsFilePath));
-            var statsCalculator = new StatsCalculator();
+            var statsCalculator = new DailyStatsCalculator();
+            var globalStatsCalculator = new GlobalStatsCalculator();
             var statsManager = new StatsManager(new DailyStatsRepository(new FileDataProvider(config.StatsFilePath)), stateChangeRepository, statsCalculator);
             stateManager = new StateManager(stateChangeRepository, statsManager);
-            viewModel = new NotifyIconViewModel(stateManager, statsManager, new StatsCache(stateManager, statsCalculator, stateChangeRepository));
+            viewModel = new NotifyIconViewModel(stateManager, statsManager, new StatsCache(stateManager, statsManager, statsCalculator, globalStatsCalculator, stateChangeRepository));
             notifyIcon.DataContext = viewModel;
             notifyIcon.TrayToolTipOpen +=notifyIcon_TrayToolTipOpen; 
             stateManager.StartWork();
