@@ -25,25 +25,21 @@ namespace WorkTracker.Business
 
         public DailyStats GetCurrentStats()
         {
-            if (stateChanges == null)
-            {
-                loadStateChanges();
-            }
+            loadStateChanges();
             return statsCalculator.CalculateDailyStats(stateChanges.Union(new[] { new StateChange() { ChangeDate = DateTime.Now, StateName = "Stopped" } }).ToList());
         }
 
         void stateManager_StateChanged(object sender, StateChange stateChange)
         {
-            if (stateChanges == null)
-            {
-                loadStateChanges();
-            }
             stateChanges.Add(stateChange);
         }
 
         private void loadStateChanges()
         {
-            stateChanges = stateChangeRepository.GetForToday();
+            if (stateChanges == null)
+            {
+                stateChanges = stateChangeRepository.GetForToday();
+            }
         }
 
 

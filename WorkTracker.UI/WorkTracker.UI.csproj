@@ -7,8 +7,8 @@
     <ProjectGuid>{71B05390-E99F-47F1-AFE0-ED9D19883257}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>WorkTracker</RootNamespace>
-    <AssemblyName>WorkTracker</AssemblyName>
+    <RootNamespace>WorkTracker.UI</RootNamespace>
+    <AssemblyName>WorkTracker.UI</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -54,22 +54,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Business\Config.cs" />
-    <Compile Include="Business\StatsCache.cs" />
-    <Compile Include="Entities\StateChange.cs" />
-    <Compile Include="Infrastructure\FileExtensions.cs" />
-    <Compile Include="Repositories\DailyStatsRepository.cs" />
-    <Compile Include="Repositories\StateChangeRepository.cs" />
-    <Compile Include="Business\Icon.cs" />
-    <Compile Include="Business\States\BreakState.cs" />
-    <Compile Include="Business\States\State.cs" />
-    <Compile Include="Business\States\StoppedState.cs" />
-    <Compile Include="Business\States\WorkState.cs" />
-    <Compile Include="Entities\DailyStats.cs" />
-    <Compile Include="Business\StateManager.cs" />
-    <Compile Include="Infrastructure\ObservableViewModel.cs" />
-    <Compile Include="Business\StatsCalculator.cs" />
-    <Compile Include="Infrastructure\DelegateCommand.cs" />
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -80,6 +64,7 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Infrastructure\DelegateCommand.cs" />
     <Compile Include="ViewModels\NotifyIconViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
@@ -111,6 +96,10 @@
     <ProjectReference Include="..\NotifyIcon\NotifyIcon.csproj">
       <Project>{3b66bbe9-aa5b-4e4a-a947-3e3d6c1577f6}</Project>
       <Name>NotifyIcon</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\WorkTracker\WorkTracker.csproj">
+      <Project>{5e6d0d83-03d5-4682-9c1c-796cae6b6ad5}</Project>
+      <Name>WorkTracker</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

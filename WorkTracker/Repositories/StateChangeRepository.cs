@@ -14,6 +14,8 @@ namespace WorkTracker.Repositories
     {
         private Config config;
         private string versionNumber = "V1.0";
+        private bool getForToday_isDirty = true;
+        private IList<StateChange> getForToday_cached;
 
         public StateChangeRepository(Config config)
         {
@@ -22,14 +24,20 @@ namespace WorkTracker.Repositories
 
         public IList<StateChange> GetForToday()
         {
-            return File.ReadAllLines(config.ActivityLogsFilePath)
-                .Select(x => fromRow(x))
-                .Where(x => x.ChangeDate.Date == DateTime.Now.Date)
-                .ToList();
+            if (getForToday_isDirty)
+            {
+                getForToday_isDirty = false;
+                getForToday_cached = File.ReadAllLines(config.ActivityLogsFilePath)
+                    .Select(x => fromRow(x))
+                    .Where(x => x.ChangeDate.Date == DateTime.Now.Date)
+                    .ToList();
+            }
+            return getForToday_cached;
         }
 
         public void Save(StateChange stateChange)
         {
+            getForToday_isDirty = true;
             toRow(stateChange).AppendToFile(config.ActivityLogsFilePath);
         }
 

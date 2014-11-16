@@ -7,11 +7,11 @@ using System.Windows;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("WorkTracker.UI")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyTitle("Work Tracker")]
+[assembly: AssemblyDescription("Tool for tracking work time")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("WorkTracker.UI")]
+[assembly: AssemblyCompany("Lukasz Wiatrak")]
+[assembly: AssemblyProduct("Work Tracker")]
 [assembly: AssemblyCopyright("Copyright ©  2014")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
