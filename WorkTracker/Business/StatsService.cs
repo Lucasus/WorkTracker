@@ -44,13 +44,15 @@ namespace WorkTracker.Business
 
         private IList<StateChange> getRealTimeStateChanges()
         {
-            var stateChangesForCalculation = stateChangeRepository.GetByDate(timeProvider.CurrentDate);
-            var lastStateChange = stateChangesForCalculation.Last();
+            var stateChanges = stateChangeRepository.GetByDate(timeProvider.CurrentDate);
+            var lastStateChange = stateChanges.Last();
+
             if (lastStateChange != null && (lastStateChange.StateName == StateNamesEnum.Work || lastStateChange.StateName == StateNamesEnum.Break))
             {
-                stateChangesForCalculation = stateChangesForCalculation.Union(new[] { new StateChange(StateNamesEnum.Stopped, timeProvider.CurrentDate, lastStateChange) }).ToList();
+                // We add virtual 'Stopped' state to make further calculations easier
+                stateChanges = stateChanges.Union(new[] { new StateChange(StateNamesEnum.Stopped, timeProvider.CurrentDate, lastStateChange) }).ToList();
             }
-            return stateChangesForCalculation;
+            return stateChanges;
         }
 
         private IList<DailyStats> getCurrentDailyStats(IList<StateChange> todayStateChanges)

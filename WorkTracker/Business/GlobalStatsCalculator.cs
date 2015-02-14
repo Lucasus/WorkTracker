@@ -11,14 +11,9 @@ namespace WorkTracker.Business
     {
         public GlobalStats CalculateGlobalStats(IList<DailyStats> dailyStatsList)
         {
-            TimeSpan totalExpectedTime = new TimeSpan(0);
-            TimeSpan totalWorkedTime = new TimeSpan(0);
-
-            foreach (var dailyStats in dailyStatsList)
-            {
-                totalExpectedTime += new TimeSpan(8, 0, 0);
-                totalWorkedTime += dailyStats.WorkTime;
-            }
+            // Assuming working 8 hours per day
+            var totalExpectedTime = dailyStatsList.Select(x => new TimeSpan(8, 0, 0)).Aggregate((x, y) => x + y);
+            var totalWorkedTime = dailyStatsList.Select(x => x.WorkTime).Aggregate((x, y) => x + y);
 
             return new GlobalStats()
             {
