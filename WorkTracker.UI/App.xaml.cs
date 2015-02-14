@@ -31,14 +31,16 @@ namespace WorkTracker.UI
             //create the notifyicon (it's a resource declared in NotifyIconResources.xaml
             notifyIcon = (TaskbarIcon)FindResource("NotifyIcon");
 
+            // Poor man's DI:
             var config = new Config();
             var stateChangeRepository = new StateChangeRepository(new FileDataProvider(config.ActivityLogsFilePath));
             var statsCalculator = new DailyStatsCalculator();
             var globalStatsCalculator = new GlobalStatsCalculator();
             var timeProvider = new TimeProvider();
-            var statsManager = new StatsManager(new DailyStatsRepository(new FileDataProvider(config.StatsFilePath)), stateChangeRepository, statsCalculator, timeProvider);
-            stateManager = new StateManager(stateChangeRepository, statsManager, timeProvider);
-            viewModel = new NotifyIconViewModel(stateManager, statsManager, new StatsCache(stateManager, statsManager, statsCalculator, globalStatsCalculator, stateChangeRepository, timeProvider));
+            var statsService = new StatsService(new DailyStatsRepository(new FileDataProvider(config.StatsFilePath)), stateChangeRepository, statsCalculator, globalStatsCalculator, timeProvider);
+            stateManager = new StateManager(stateChangeRepository, statsService, timeProvider);
+            viewModel = new NotifyIconViewModel(stateManager, statsService);
+
             notifyIcon.DataContext = viewModel;
             notifyIcon.TrayToolTipOpen += notifyIcon_TrayToolTipOpen;
             stateManager.StartWork();

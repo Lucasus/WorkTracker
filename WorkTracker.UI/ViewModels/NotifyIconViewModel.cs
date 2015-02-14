@@ -12,14 +12,12 @@ namespace WorkTracker.UI
     public class NotifyIconViewModel : ObservableViewModel
     {
         private StateManager stateManager;
-        private StatsManager statsManager;
-        private StatsCache statsCache;
+        private StatsService statsService;
 
-        public NotifyIconViewModel(StateManager stateManager, StatsManager statsManager, StatsCache statsCache)
+        public NotifyIconViewModel(StateManager stateManager, StatsService statsService)
         {
             this.stateManager = stateManager;
-            this.statsManager = statsManager;
-            this.statsCache = statsCache;
+            this.statsService = statsService;
             stateManager.StateChanged += stateManager_StateChanged;
         }
 
@@ -59,7 +57,7 @@ namespace WorkTracker.UI
                 {
                     CommandAction = () =>
                     {
-                        statsManager.UpdateStats();
+                        statsService.UpdateStats();
                     }
                 };
             }
@@ -105,7 +103,7 @@ namespace WorkTracker.UI
         {
             get
             {
-                return "Break: " + getShortTimeSpanString(statsCache.GetCurrentTodayStats().BreakTime);
+                return "Break: " + getShortTimeSpanString(statsService.GetRealTimeTodayStats().BreakTime);
             }
         }
 
@@ -113,7 +111,7 @@ namespace WorkTracker.UI
         {
             get
             {
-                return "Work: " + getShortTimeSpanString(statsCache.GetCurrentTodayStats().WorkTime);
+                return "Work: " + getShortTimeSpanString(statsService.GetRealTimeTodayStats().WorkTime);
             }
         }
 
@@ -122,7 +120,7 @@ namespace WorkTracker.UI
         {
             get
             {
-                return "Total: " + getShortTimeSpanString(statsCache.GetCurrentTodayStats().TotalTime);
+                return "Total: " + getShortTimeSpanString(statsService.GetRealTimeTodayStats().TotalTime);
             }
         }
 
@@ -130,7 +128,7 @@ namespace WorkTracker.UI
         {
             get
             {
-                var globalStats = statsCache.GetGlobalStats();
+                var globalStats = statsService.GetRealTimeGlobalStats();
                 return "Difference: " + getShortTimeSpanString(globalStats.TimeDifference) + " " + (globalStats.TimeType == TimeDifferenceEnum.Overtime ? "overtime" : "undertime");
             }
         }

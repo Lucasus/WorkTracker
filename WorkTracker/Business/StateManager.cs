@@ -13,7 +13,7 @@ namespace WorkTracker.Business
     public class StateManager
     {        
         private IStateChangeRepository stateChangeRepository;
-        private StatsManager statsManager;
+        private StatsService statsManager;
         private ITimeProvider timeProvider;
 
         public State CurrentState { get; private set; }
@@ -27,7 +27,7 @@ namespace WorkTracker.Business
             }
         }
 
-        public StateManager(IStateChangeRepository stateChangeRepository, StatsManager statsManager, ITimeProvider timeProvider)
+        public StateManager(IStateChangeRepository stateChangeRepository, StatsService statsManager, ITimeProvider timeProvider)
         {
             this.stateChangeRepository = stateChangeRepository;
             this.statsManager = statsManager;
