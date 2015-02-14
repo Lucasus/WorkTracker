@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Timers;
 using WorkTracker.Entities;
+using WorkTracker.Infrastructure;
 using WorkTracker.Repositories;
 
 namespace WorkTracker.Business
@@ -13,8 +14,9 @@ namespace WorkTracker.Business
     {        
         private IStateChangeRepository stateChangeRepository;
         private StatsManager statsManager;
+        private ITimeProvider timeProvider;
 
-        public State CurrentState { get; set; }
+        public State CurrentState { get; private set; }
 
         public event EventHandler<StateChange> StateChanged;
         public void OnStateChanged(StateChange stateChange)
@@ -25,10 +27,11 @@ namespace WorkTracker.Business
             }
         }
 
-        public StateManager(IStateChangeRepository stateChangeRepository, StatsManager statsManager)
+        public StateManager(IStateChangeRepository stateChangeRepository, StatsManager statsManager, ITimeProvider timeProvider)
         {
             this.stateChangeRepository = stateChangeRepository;
             this.statsManager = statsManager;
+            this.timeProvider = timeProvider;
         }
 
         public void StopWork()
@@ -57,7 +60,7 @@ namespace WorkTracker.Business
             if (CurrentState == null || newState.Name != CurrentState.Name)
             {
                 CurrentState = newState;
-                var stateChange = new StateChange(newState.Name, DateTime.Now, stateChangeRepository.GetLast());
+                var stateChange = new StateChange(newState.Name, timeProvider.CurrentDate, stateChangeRepository.GetLast());
                 stateChangeRepository.Save(stateChange);
                 OnStateChanged(stateChange);
             }

@@ -13,8 +13,9 @@ namespace WorkTracker.Tests
     public class StatsCalculatorTests
     {
         [TestMethod]
-        public void Should_Correctly_Calculate_Stats()
+        public void Should_Correctly_Calculate_Stats_For_Specific_Day()
         {
+            // arrage
             var todayDate = new DateTime(2014, 10, 24);
             var stateChangeRepository = Substitute.For<IStateChangeRepository>();
 
@@ -27,8 +28,10 @@ namespace WorkTracker.Tests
 
             stateChangeRepository.GetByDate(todayDate).Returns(stateChanges);
 
+            // act
             var stats = new DailyStatsCalculator().GetSingleDayStats(stateChangeRepository.GetByDate(todayDate));
 
+            // assert
             Assert.AreEqual(new TimeSpan(6, 30, 0), stats.WorkTime);
             Assert.AreEqual(new TimeSpan(1, 10, 0), stats.BreakTime);
             Assert.AreEqual(todayDate.AddHours(6), stats.WorkStart);

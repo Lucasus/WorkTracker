@@ -28,7 +28,13 @@ namespace WorkTracker.Repositories
 
         private string toRow(DailyStats entity)
         {
-            return String.Join(",", versionNumber, entity.StatsDate.ToShortDateString(), entity.WorkStart, entity.WorkEnd, entity.WorkTime, entity.BreakTime, entity.TotalTime);
+            return String.Join(",", versionNumber, 
+                entity.StatsDate.ToShortDateString(), 
+                entity.WorkStart.ToShortTimeString(), 
+                entity.WorkEnd.ToShortTimeString(), 
+                entity.WorkTime, 
+                entity.BreakTime, 
+                entity.TotalTime);
         }
 
         private DailyStats fromRow(string row)

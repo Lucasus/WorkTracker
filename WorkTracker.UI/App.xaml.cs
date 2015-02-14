@@ -1,4 +1,5 @@
 ﻿using Hardcodet.Wpf.TaskbarNotification;
+using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -25,6 +26,7 @@ namespace WorkTracker.UI
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
+            SystemEvents.PowerModeChanged += SystemEvents_PowerModeChanged;
 
             //create the notifyicon (it's a resource declared in NotifyIconResources.xaml
             notifyIcon = (TaskbarIcon)FindResource("NotifyIcon");
@@ -33,12 +35,25 @@ namespace WorkTracker.UI
             var stateChangeRepository = new StateChangeRepository(new FileDataProvider(config.ActivityLogsFilePath));
             var statsCalculator = new DailyStatsCalculator();
             var globalStatsCalculator = new GlobalStatsCalculator();
-            var statsManager = new StatsManager(new DailyStatsRepository(new FileDataProvider(config.StatsFilePath)), stateChangeRepository, statsCalculator);
-            stateManager = new StateManager(stateChangeRepository, statsManager);
-            viewModel = new NotifyIconViewModel(stateManager, statsManager, new StatsCache(stateManager, statsManager, statsCalculator, globalStatsCalculator, stateChangeRepository));
+            var timeProvider = new TimeProvider();
+            var statsManager = new StatsManager(new DailyStatsRepository(new FileDataProvider(config.StatsFilePath)), stateChangeRepository, statsCalculator, timeProvider);
+            stateManager = new StateManager(stateChangeRepository, statsManager, timeProvider);
+            viewModel = new NotifyIconViewModel(stateManager, statsManager, new StatsCache(stateManager, statsManager, statsCalculator, globalStatsCalculator, stateChangeRepository, timeProvider));
             notifyIcon.DataContext = viewModel;
-            notifyIcon.TrayToolTipOpen +=notifyIcon_TrayToolTipOpen; 
+            notifyIcon.TrayToolTipOpen += notifyIcon_TrayToolTipOpen;
             stateManager.StartWork();
+        }
+
+        void SystemEvents_PowerModeChanged(object sender, PowerModeChangedEventArgs e)
+        {
+            if(e.Mode == PowerModes.Suspend)
+            {
+                stateManager.StopWork();
+            }
+            else if(e.Mode == PowerModes.Resume)
+            {
+                stateManager.StartWork();
+            }
         }
 
         void notifyIcon_TrayToolTipOpen(object sender, RoutedEventArgs e)

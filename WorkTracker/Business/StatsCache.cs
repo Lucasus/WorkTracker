@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using WorkTracker.Entities;
+using WorkTracker.Infrastructure;
 using WorkTracker.Repositories;
 
 namespace WorkTracker.Business
@@ -16,19 +17,21 @@ namespace WorkTracker.Business
         private DailyStatsCalculator statsCalculator;
         private GlobalStatsCalculator globalStatsCalculator;
         private IStateChangeRepository stateChangeRepository;
+        private ITimeProvider timeProvider;
 
         public StatsCache(StateManager stateManager, StatsManager statsManager, DailyStatsCalculator statsCalculator, GlobalStatsCalculator globalStatsCalculator, 
-            IStateChangeRepository stateChangeRepository)
+            IStateChangeRepository stateChangeRepository, ITimeProvider timeProvider)
         {
             this.stateManager = stateManager;
             this.statsManager = statsManager;
             this.statsCalculator = statsCalculator;
             this.stateChangeRepository = stateChangeRepository;
             this.globalStatsCalculator = globalStatsCalculator;
+            this.timeProvider = timeProvider;
             this.stateManager.StateChanged += stateManager_StateChanged;
         }
 
-        public DailyStats GetCurrentStats()
+        public DailyStats GetCurrentTodayStats()
         {
             return statsCalculator.GetSingleDayStats(getStateChangesForCalculation());
         }
@@ -50,7 +53,7 @@ namespace WorkTracker.Business
             var stateChangesForCalculation = todayStateChanges;
             if (lastStateChange != null && (lastStateChange.StateName == StateNamesEnum.Work || lastStateChange.StateName == StateNamesEnum.Break))
             {
-                stateChangesForCalculation = stateChangesForCalculation.Union(new[] { new StateChange(StateNamesEnum.Stopped, DateTime.Now, lastStateChange) }).ToList();
+                stateChangesForCalculation = stateChangesForCalculation.Union(new[] { new StateChange(StateNamesEnum.Stopped, timeProvider.CurrentDate, lastStateChange) }).ToList();
             }
             return stateChangesForCalculation;
         }
@@ -59,7 +62,7 @@ namespace WorkTracker.Business
         {
             if (todayStateChanges == null)
             {
-                todayStateChanges = stateChangeRepository.GetByDate(DateTime.Now);
+                todayStateChanges = stateChangeRepository.GetByDate(timeProvider.CurrentDate);
             }
         }
     }

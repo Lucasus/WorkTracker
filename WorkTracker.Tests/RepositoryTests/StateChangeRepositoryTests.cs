@@ -12,7 +12,7 @@ namespace WorkTracker.Tests
     public class StateChangeRepositoryTests
     {
         [TestMethod]
-        public void ShouldReturnCorrectList()
+        public void Should_Return_Correct_Records_By_Date()
         {
             var todayDate = new DateTime(2014, 10, 24);
             var dataProvider = Substitute.For<IStringDataProvider>();

@@ -56,6 +56,8 @@
     <Compile Include="Entities\StateChange.cs" />
     <Compile Include="Infrastructure\FileDataProvider.cs" />
     <Compile Include="Infrastructure\IDataProvider.cs" />
+    <Compile Include="Infrastructure\ITimeProvider.cs" />
+    <Compile Include="Infrastructure\TimeProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Repositories\DailyStatsRepository.cs" />
     <Compile Include="Repositories\Interfaces\IDailyStatsRepository.cs" />

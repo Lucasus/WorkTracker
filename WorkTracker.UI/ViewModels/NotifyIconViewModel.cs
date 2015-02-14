@@ -105,7 +105,7 @@ namespace WorkTracker.UI
         {
             get
             {
-                return "Break: " + getShortTimeSpanString(statsCache.GetCurrentStats().BreakTime);
+                return "Break: " + getShortTimeSpanString(statsCache.GetCurrentTodayStats().BreakTime);
             }
         }
 
@@ -113,7 +113,7 @@ namespace WorkTracker.UI
         {
             get
             {
-                return "Work: " + getShortTimeSpanString(statsCache.GetCurrentStats().WorkTime);
+                return "Work: " + getShortTimeSpanString(statsCache.GetCurrentTodayStats().WorkTime);
             }
         }
 
@@ -122,7 +122,7 @@ namespace WorkTracker.UI
         {
             get
             {
-                return "Total: " + getShortTimeSpanString(statsCache.GetCurrentStats().TotalTime);
+                return "Total: " + getShortTimeSpanString(statsCache.GetCurrentTodayStats().TotalTime);
             }
         }
 
